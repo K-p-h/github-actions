@@ -1,0 +1,17 @@
+name: Job Runs on Success
+
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Running tests..."
+
+  deploy:
+    needs: test # runs only when 'test' succeeds (default behavior of needs)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy
+        run: echo "Deploying because tests succeeded..."

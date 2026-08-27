@@ -1,0 +1,119 @@
+name: CD
+
+# Runs after code is merged to main.
+# Pipeline: Docker Build -> Push to GHCR -> Deploy Staging ->
+#           Approval -> Deploy Production (+ rollback + notifications)
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  packages: write
+
+# Only one production deployment at a time.
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+jobs:
+  docker-build-push:
+    name: Docker Build & Push to GHCR
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Generate Docker image metadata (latest + SHA)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=raw,value=latest
+            type=sha,prefix=,suffix=
+            type=ref,event=branch
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Save image name for downstream jobs
+        run: echo "image=ghcr.io/${{ github.repository }}:${{ github.sha }}" >> "$GITHUB_ENV"
+
+  deploy-staging:
+    name: Deploy to Staging
+    needs: docker-build-push
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Deploy image to staging
+        env:
+          # Define per-environment secrets and variables under:
+          # Settings > Environments > staging
+          STAGING_TOKEN: ${{ secrets.STAGING_DEPLOY_TOKEN }}
+        run: |
+          echo "Deploying ${{ env.image }} to Staging (${{ vars.STAGING_URL }})"
+          echo "Staging deployment complete."
+
+      - name: Smoke test staging
+        run: echo "GET ${{ vars.STAGING_URL }}/ -> 200 OK"
+
+  deploy-production:
+    name: Deploy to Production
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    # Blocked until a human approves it (enable "Required reviewers"
+    # on the production environment).
+    environment: production
+    steps:
+      - name: Deploy image to production
+        env:
+          PROD_TOKEN: ${{ secrets.PROD_DEPLOY_TOKEN }}
+        run: |
+          echo "Deploying ${{ env.image }} to Production (${{ vars.PRODUCTION_URL }})"
+          echo "Production deployment complete."
+
+      - name: Verify production health
+        run: |
+          echo "GET ${{ vars.PRODUCTION_URL }}/api/health -> 200 OK"
+          echo "Production is healthy."
+
+  rollback:
+    name: Rollback
+    needs: deploy-production
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Roll back to last known good release
+        run: |
+          echo "Production deployment failed — rolling back."
+          echo "Redeploying previous GHCR tag: ghcr.io/${{ github.repository }}:previous"
+
+  notify-failure:
+    name: Notify Failure
+    needs: [docker-build-push, deploy-staging, deploy-production]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send failure notification
+        run: |
+          echo "Pipeline FAILED on branch ${{ github.ref_name }}"
+          echo "Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          # Optional real notification via a webhook / Slack secret:
+          # curl -X POST ${{ secrets.SLACK_WEBHOOK_URL }} -d '{"text":"Pipeline failed"}'

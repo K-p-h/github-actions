@@ -1,0 +1,56 @@
+name: Security
+
+# Scheduled weekly security checks + manual trigger + npm audit on every PR.
+on:
+  schedule:
+    - cron: "0 3 * * 1" # every Monday 03:00 UTC
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  audit:
+    name: Dependency Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+
+      - name: Run npm audit (fail on high severity)
+        run: npm audit --audit-level=high
+
+      - name: Verify registry signatures
+        run: npm audit signatures
+
+  codeql:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ["javascript"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+      - uses: github/codeql-action/analyze@v3
+
+  notify:
+    name: Notify Security Failure
+    needs: [audit, codeql]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send security alert
+        run: |
+          echo "Security check FAILED — review the run:"
+          echo "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"

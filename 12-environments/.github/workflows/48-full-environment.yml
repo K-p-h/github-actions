@@ -1,0 +1,34 @@
+name: Full Environment Pipeline
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run lint
+      - run: npm test
+
+  staging:
+    needs: ci
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Deploy to staging
+        run: echo "Deploying to STAGING at ${{ vars.STAGING_URL }}"
+
+  production:
+    needs: staging
+    runs-on: ubuntu-latest
+    environment: production # pauses here for required approval
+    steps:
+      - name: Deploy to production
+        run: echo "Deploying to PRODUCTION at ${{ vars.PRODUCTION_URL }}"

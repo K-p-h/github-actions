@@ -1,0 +1,17 @@
+name: Monday + Manual
+
+on:
+  schedule:
+    - cron: "0 9 * * 1" # 09:00 UTC every Monday
+  workflow_dispatch:
+
+jobs:
+  weekly-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run weekly job
+        run: |
+          echo "Triggered by: ${{ github.event_name }}"
+          echo "Generating weekly report..."

@@ -1,0 +1,14 @@
+name: Daily Midnight Job
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # UTC midnight, every day
+
+jobs:
+  midnight-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run night job
+        run: echo "Scheduled job running at midnight (UTC) on ${{ github.ref_name }}"

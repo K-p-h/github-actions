@@ -1,0 +1,20 @@
+name: Pull Request Workflow
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  pr-event:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Print PR details
+        run: |
+          echo "PR #${{ github.event.pull_request.number }} was ${{ github.event.action }}"
+          echo "PR title: ${{ github.event.pull_request.title }}"

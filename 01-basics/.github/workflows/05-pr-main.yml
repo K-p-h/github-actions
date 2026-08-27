@@ -1,0 +1,16 @@
+name: PR to main
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  pr-to-main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Confirm targeting main
+        run: echo "This PR targets the main branch"

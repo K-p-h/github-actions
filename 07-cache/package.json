@@ -1,0 +1,16 @@
+{
+  "name": "node-calculator",
+  "version": "1.0.0",
+  "description": "A simple calculator used to learn GitHub Actions",
+  "main": "src/calculator.js",
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint src test",
+    "build": "node scripts/build.js"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "jest": "^29.7.0"
+  }
+}

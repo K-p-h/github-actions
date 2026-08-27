@@ -1,0 +1,30 @@
+name: Reusable Deploy
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: Target environment
+        required: true
+        type: string
+      deploy-url:
+        description: Deployment URL
+        required: false
+        type: string
+        default: ""
+    secrets:
+      DEPLOY_TOKEN:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    env:
+      DEPLOY_URL: ${{ inputs.deploy-url }}
+    steps:
+      - name: Deploy
+        run: |
+          echo "Deploying to environment: ${{ inputs.environment }}"
+          echo "Deploy URL: $DEPLOY_URL"
+          echo "Using DEPLOY_TOKEN (masked) to authenticate."

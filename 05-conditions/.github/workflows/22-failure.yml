@@ -1,0 +1,21 @@
+name: Job Runs on Failure
+
+on:
+  push:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simulate a failing deployment
+        run: |
+          echo "Deployment attempt..."
+          exit 1
+
+  rollback:
+    needs: deploy
+    if: failure() # runs only when deploy fails
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger rollback
+        run: echo "Deployment failed — rolling back to previous version..."

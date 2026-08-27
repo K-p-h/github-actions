@@ -1,0 +1,16 @@
+name: Version Tag Workflow
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  on-version-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Show version
+        run: |
+          echo "Version tag pushed: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"

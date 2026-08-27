@@ -1,0 +1,19 @@
+name: Minimum Permissions
+
+on:
+  push:
+  pull_request:
+
+# Grants only the minimum permissions this workflow needs.
+# Read-only contents is the safest default.
+permissions:
+  contents: read
+  issues: read
+
+jobs:
+  restrict-permissions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: This job reads code but cannot write to the repo
+        run: echo "Least-privilege permissions applied"

@@ -1,0 +1,17 @@
+name: Manual Workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  info:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print repository name
+        run: 'echo "Repository: ${{ github.repository }}"'
+
+      - name: Print branch name
+        run: 'echo "Branch: ${{ github.ref_name }}"'
+
+      - name: Print GitHub username
+        run: 'echo "User: ${{ github.actor }}"'

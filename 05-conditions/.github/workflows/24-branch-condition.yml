@@ -1,0 +1,22 @@
+name: Different Behavior per Branch
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  conditional:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run only on main
+        if: github.ref_name == 'main'
+        run: echo "▶ Building + deploying to PRODUCTION (main)"
+
+      - name: Run only on develop
+        if: github.ref_name == 'develop'
+        run: echo "▶ Building + deploying to STAGING (develop)"
+
+      - name: Always runs
+        run: 'echo "Branch checked: ${{ github.ref_name }}"'

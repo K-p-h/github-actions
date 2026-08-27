@@ -1,0 +1,20 @@
+name: Environment Variables
+
+on:
+  push:
+  workflow_dispatch:
+
+env:
+  NODE_ENV: production
+  APP_NAME: my-node-app
+  APP_VERSION: 1.2.3
+
+jobs:
+  print-env:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print environment variables
+        run: |
+          echo "NODE_ENV = $NODE_ENV"
+          echo "APP_NAME = $APP_NAME"
+          echo "APP_VERSION = $APP_VERSION"

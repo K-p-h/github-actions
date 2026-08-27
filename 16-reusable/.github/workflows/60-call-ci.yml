@@ -1,0 +1,15 @@
+name: Call Reusable CI
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  # Calls the reusable CI pipeline defined in 58-reusable-ci.yml.
+  # In a real repo these files live side by side in .github/workflows/.
+  ci:
+    uses: ./.github/workflows/58-reusable-ci.yml
+    with:
+      node-version: "20"
+    secrets:
+      SOME_TOKEN: ${{ secrets.SOME_TOKEN }}

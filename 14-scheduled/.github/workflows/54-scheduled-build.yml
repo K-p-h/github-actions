@@ -1,0 +1,22 @@
+name: Scheduled Build Check
+
+on:
+  schedule:
+    - cron: "0 2 * * *" # every day at 02:00 UTC
+  workflow_dispatch:
+
+jobs:
+  build-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Verify the app still builds
+        run: npm run build
+
+      - name: Report success
+        run: echo "Scheduled build check passed ✓"

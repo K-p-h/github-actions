@@ -1,0 +1,30 @@
+name: Release with Artifact
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm test
+      - run: npm run build
+
+      - name: Package build into a zip
+        run: |
+          tar -czf nextjs-build-${{ github.ref_name }}.tar.gz -C . .next package.json
+
+      - name: Upload build artifact to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: |
+            nextjs-build-${{ github.ref_name }}.tar.gz

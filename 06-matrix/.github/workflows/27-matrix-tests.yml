@@ -1,0 +1,27 @@
+name: Matrix - Different Test Commands
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: Node ${{ matrix.node-version }} → ${{ matrix.test-command }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - node-version: 18
+            test-command: "npm test -- --runInBand"
+          - node-version: 20
+            test-command: "npm test"
+          - node-version: 22
+            test-command: "npm test -- --coverage"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci
+      - name: Run matrix-specific test command
+        run: ${{ matrix.test-command }}

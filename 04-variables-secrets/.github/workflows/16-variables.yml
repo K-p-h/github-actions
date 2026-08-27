@@ -1,0 +1,19 @@
+name: GitHub Repository Variables
+
+on:
+  workflow_dispatch:
+
+jobs:
+  use-variables:
+    runs-on: ubuntu-latest
+    env:
+      APP_NAME: ${{ vars.APP_NAME }}
+      DEPLOY_REGION: ${{ vars.DEPLOY_REGION }}
+    steps:
+      # Repository variables are set in:
+      # Settings > Secrets and variables > Actions > Variables
+      # e.g. APP_NAME=my-app, DEPLOY_REGION=us-east-1
+      - name: Print repository variables
+        run: |
+          echo "APP_NAME = $APP_NAME"
+          echo "DEPLOY_REGION = $DEPLOY_REGION"

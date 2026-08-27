@@ -1,0 +1,50 @@
+name: Release
+
+# Runs when a version tag pushing a release workflow
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  ci:
+    name: Verify Version Tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+
+  release:
+    name: Create GitHub Release
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Package build for release
+        run: |
+          mkdir -p release
+          tar -czf release/nextjs-build-${{ github.ref_name }}.tar.gz -C . .next package.json app
+
+      - name: Create Release and upload artifact
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body: |
+            ## Release ${{ github.ref_name }}
+            Automated release generated from tag ${{ github.ref_name }}.
+          files: |
+            release/nextjs-build-${{ github.ref_name }}.tar.gz
+          draft: false
+          prerelease: false

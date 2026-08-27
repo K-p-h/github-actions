@@ -1,0 +1,50 @@
+name: Per-Environment Configuration
+
+on:
+  workflow_dispatch:
+
+# Create GitHub Environments:
+# Settings > Environments > development / staging / production
+# Add secrets like DEPLOY_URL as environment-specific secrets for each.
+jobs:
+  development:
+    runs-on: ubuntu-latest
+    environment: development
+    env:
+      NODE_ENV: development
+      APP_NAME: my-app
+      LOG_LEVEL: debug
+      DEPLOY_URL: ${{ secrets.DEV_DEPLOY_URL }}
+    steps:
+      - name: Deploy to development
+        run: |
+          echo "Deploying $APP_NAME to development (LOG_LEVEL=$LOG_LEVEL, NODE_ENV=$NODE_ENV)"
+          echo "Dev URL: $DEPLOY_URL"
+
+  staging:
+    runs-on: ubuntu-latest
+    environment: staging
+    env:
+      NODE_ENV: staging
+      APP_NAME: my-app
+      LOG_LEVEL: info
+      DEPLOY_URL: ${{ secrets.STAGING_DEPLOY_URL }}
+    steps:
+      - name: Deploy to staging
+        run: |
+          echo "Deploying $APP_NAME to staging (LOG_LEVEL=$LOG_LEVEL, NODE_ENV=$NODE_ENV)"
+          echo "Staging URL: $DEPLOY_URL"
+
+  production:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      NODE_ENV: production
+      APP_NAME: my-app
+      LOG_LEVEL: warn
+      DEPLOY_URL: ${{ secrets.PROD_DEPLOY_URL }}
+    steps:
+      - name: Deploy to production
+        run: |
+          echo "Deploying $APP_NAME to production (LOG_LEVEL=$LOG_LEVEL, NODE_ENV=$NODE_ENV)"
+          echo "Production URL: $DEPLOY_URL"

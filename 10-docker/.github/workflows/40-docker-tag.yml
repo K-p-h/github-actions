@@ -1,0 +1,35 @@
+name: Docker Tag with SHA
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  docker-tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Extract Git SHA tag
+        id: meta
+        run: echo "sha_short=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+        # ${{ github.sha }} referenced below is the full commit SHA
+
+      - name: Build and tag image with commit SHA
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          tags: |
+            ${{ github.repository }}:latest
+            ${{ github.repository }}:${{ steps.meta.outputs.sha_short }}
+            ${{ github.repository }}:${{ github.sha }}
+
+      - name: Show generated tags
+        run: echo "Image is tagged with latest, ${{ steps.meta.outputs.sha_short }} and full SHA ${{ github.sha }}"

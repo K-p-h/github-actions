@@ -1,0 +1,13 @@
+name: Push to any branch
+
+on: push
+
+jobs:
+  on-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Show branch
+        run: echo "Code pushed to branch ${{ github.ref_name }}"

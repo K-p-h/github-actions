@@ -1,0 +1,25 @@
+name: Environments
+
+on:
+  workflow_dispatch:
+
+# Creates references to GitHub Environments (configure them under
+# Settings > Environments: development, staging, production).
+jobs:
+  show-dev:
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+      - run: echo "Using the development environment"
+
+  show-staging:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - run: echo "Using the staging environment"
+
+  show-production:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - run: echo "Using the production environment"

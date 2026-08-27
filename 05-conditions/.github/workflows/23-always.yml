@@ -1,0 +1,21 @@
+name: Cleanup Always Runs
+
+on:
+  push:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simulate a potentially failing deploy
+        run: |
+          echo "Deploying..."
+          # Uncomment to test: exit 1
+
+  cleanup:
+    needs: deploy
+    if: always() # runs even if deploy fails (or is skipped/cancelled)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clean up resources
+        run: echo "Cleaning up temporary resources (always runs)..."

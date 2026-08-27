@@ -1,0 +1,26 @@
+name: Failure Notification
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm test
+
+  notify-on-failure:
+    needs: test
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send failure notification
+        run: |
+          echo "❌ The test job failed on branch ${{ github.ref_name }}"
+          echo "Check the run details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
