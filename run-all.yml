@@ -1,0 +1,188 @@
+name: Run All 17 Levels
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  level-01:
+    name: Level 01 - Basics
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Level 01
+        run: |
+          echo "Running Level 01 - Basics"
+          # Add your Level 01 commands here
+
+  level-02:
+    name: Level 02 - Node.js
+    needs: level-01
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Level 02
+        run: |
+          echo "Running Level 02 - Node.js"
+          # Add your Level 02 commands here
+
+  level-03:
+    name: Level 03 - Jobs
+    needs: level-02
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Level 03
+        run: |
+          echo "Running Level 03 - Jobs"
+
+  level-04:
+    name: Level 04 - Variables & Secrets
+    needs: level-03
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Level 04
+        run: |
+          echo "Running Level 04 - Variables & Secrets"
+
+  level-05:
+    name: Level 05 - Conditions
+    needs: level-04
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Level 05
+        run: |
+          echo "Running Level 05 - Conditions"
+
+  level-06:
+    name: Level 06 - Matrix
+    needs: level-05
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Level 06
+        run: |
+          echo "Running Level 06 - Matrix"
+
+  level-07:
+    name: Level 07 - Cache
+    needs: level-06
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Level 07
+        run: |
+          echo "Running Level 07 - Cache"
+
+  level-08:
+    name: Level 08 - Artifacts
+    needs: level-07
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Level 08
+        run: |
+          echo "Running Level 08 - Artifacts"
+
+  level-09:
+    name: Level 09 - Next.js
+    needs: level-08
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Level 09
+        run: |
+          echo "Running Level 09 - Next.js"
+
+  level-10:
+    name: Level 10 - Docker
+    needs: level-09
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Level 10
+        run: |
+          echo "Running Level 10 - Docker"
+
+  level-11:
+    name: Level 11 - GHCR
+    needs: level-10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Level 11
+        run: |
+          echo "Running Level 11 - GHCR"
+
+  level-12:
+    name: Level 12 - Environments
+    needs: level-11
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Level 12
+        run: |
+          echo "Running Level 12 - Environments"
+
+  level-13:
+    name: Level 13 - Render
+    needs: level-12
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Level 13
+        run: |
+          echo "Running Level 13 - Render"
+
+  level-14:
+    name: Level 14 - Scheduled
+    needs: level-13
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Level 14
+        run: |
+          echo "Running Level 14 - Scheduled"
+
+  level-15:
+    name: Level 15 - Releases
+    needs: level-14
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Level 15
+        run: |
+          echo "Running Level 15 - Releases"
+
+  level-16:
+    name: Level 16 - Reusable Workflows
+    needs: level-15
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Level 16
+        run: |
+          echo "Running Level 16 - Reusable Workflows"
+
+  level-17:
+    name: Level 17 - Security
+    needs: level-16
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Level 17
+        run: |
+          echo "Running Level 17 - Security"
+
+  final-project:
+    name: Final Project
+    needs: level-17
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Final Project
+        run: |
+          echo "Running Final Project"
+          echo "All 17 levels completed!"
